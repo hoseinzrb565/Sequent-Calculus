@@ -30,8 +30,11 @@ def get_list_of_variables(formula_lst):
     if not isinstance(formula_lst, list):
         return
 
-    if len(formula_lst) == 1 and not formula_lst[0] in variables:
-        variables.append(formula_lst[0])
+    if len(formula_lst) == 1 :
+        if isinstance(formula_lst[0], list) and not formula_lst[0][0] in variables:
+            variables.append(formula_lst[0][0])
+        elif not isinstance(formula_lst[0], list) and not formula_lst[0] in variables:
+            variables.append(formula_lst[0])
 
     elif len(formula_lst) > 1:
 
