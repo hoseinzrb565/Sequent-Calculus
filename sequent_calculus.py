@@ -82,7 +82,6 @@ class Node():
 
 
 def prove(node):
-
     premises = node.sequent[0]
     conclusions = node.sequent[1]
 
@@ -92,137 +91,150 @@ def prove(node):
     left = []
     right = []
 
-    if len(premises) > 0:
-        left = premises[0]
-
-    if len(conclusions) > 0:
-        right = conclusions[-1]
-
     left_child_premises = []
     left_child_conclusions = []
+
     right_child_premises = []
     right_child_conclusions = []
 
-    if len(left) == 2:
-        gamma = premises[1:]
-        delta = conclusions
+    for formula in premises:
+        if len(formula) > 1:
+            left = formula
+            break
 
-        connective = left[0]
-        A = left[1]
+    for formula in conclusions:
+        if len(formula) > 1:
+            right = formula
+            break
 
-        if connective == 'not':
-
-            for formula in gamma:
-                left_child_premises.append(formula)
-
-            left_child_conclusions.append(A)
-
-            for formula in delta:
-                left_child_conclusions.append(formula)
-
-    elif len(left) == 3:
-
-        gamma = premises[1:]
-        delta = conclusions
-        A = left[0]
-        B = left[2]
-        connective = left[1]
-
-        if connective == 'and':
-
-            left_child_premises.append(A)
-            left_child_premises.append(B)
-            for formula in gamma:
-                left_child_premises.append(formula)
-
-            for formula in delta:
-                left_child_conclusions.append(formula)
-
-        elif connective == 'or':
-
-            left_child_premises.append(A)
-            for formula in gamma:
-                left_child_premises.append(formula)
-
-            right_child_premises.append(B)
-            for formula in gamma:
-                right_child_premises.append(formula)
-
-            for formula in delta:
-                left_child_conclusions.append(formula)
-                right_child_conclusions.append(formula)
-
-        elif connective == 'then':
-
-            for formula in gamma:
-                left_child_premises.append(formula)
-
-            left_child_conclusions.append(A)
-
-            right_child_premises.append(B)
-            for formula in gamma:
-                right_child_premises.append(formula)
-
-            for formula in delta:
-                left_child_conclusions.append(formula)
-                right_child_conclusions.append(formula)
-
-    elif len(right) == 2:
-        gamma = premises
-        delta = conclusions[:-1]
-
-        connective = right[0]
-        A = right[1]
-
-        if connective == 'not':
-
-            left_child_premises.append(A)
-            for formula in gamma:
-                left_child_premises.append(formula)
-
-            for formula in delta:
-                left_child_conclusions.append(formula)
-
-    elif len(right) == 3:
+    if len(right) > 1:
 
         gamma = premises
-        delta = conclusions[:-1]
-        A = right[0]
-        B = right[2]
-        connective = right[1]
+        delta = []
+        for formula in conclusions:
+            if formula != right:
+                delta.append(formula)
 
-        if connective == 'and':
-            for formula in gamma:
-                left_child_premises.append(formula)
-                right_child_premises.append(formula)
+        if len(right) == 2:
 
-            for formula in delta:
-                left_child_conclusions.append(formula)
-                right_child_conclusions.append(formula)
+            connective = right[0]
+            A = right[1]
 
-            left_child_conclusions.append(A)
-            right_child_conclusions.append(B)
+            if connective == 'not':
+                left_child_premises.append(A)
+                for formula in gamma:
+                    left_child_premises.append(formula)
 
-        elif connective == 'or':
-            for formula in gamma:
-                left_child_premises.append(formula)
-            for formula in delta:
-                left_child_conclusions.append(formula)
+                for formula in delta:
+                    left_child_conclusions.append(formula)
 
-            left_child_conclusions.append(A)
-            left_child_conclusions.append(B)
+        elif len(right) == 3:
 
-        elif connective == 'then':
-            left_child_premises.append(A)
+            A = right[0]
+            B = right[2]
+            connective = right[1]
 
-            for formula in gamma:
-                left_child_premises.append(formula)
-            for formula in delta:
-                left_child_conclusions.append(formula)
+            if connective == 'and':
 
-            left_child_conclusions.append(B)
+                for formula in gamma:
+                    left_child_premises.append(formula)
+                    right_child_premises.append(formula)
 
+                left_child_conclusions.append(A)
+                right_child_conclusions.append(B)
 
+                for formula in delta:
+                    left_child_conclusions.append(formula)
+                    right_child_conclusions.append(formula)
+
+            elif connective == 'or':
+
+                for formula in gamma:
+                    left_child_premises.append(formula)
+
+                left_child_conclusions.append(A)
+                left_child_conclusions.append(B)
+
+                for formula in delta:
+                    left_child_conclusions.append(formula)
+
+            elif connective == 'then':
+
+                for formula in gamma:
+                    left_child_premises.append(formula)
+
+                left_child_premises.append(A)
+                left_child_conclusions.append(B)
+
+                for formula in delta:
+                    left_child_conclusions.append(formula)
+
+    elif len(left) > 1:
+
+        gamma = []
+        for formula in premises:
+            if formula != left:
+                gamma.append(formula)
+
+        delta = conclusions
+
+        if len(left) == 2:
+
+            connective = left[0]
+            A = left[1]
+
+            if connective == 'not':
+
+                for formula in gamma:
+                    left_child_premises.append(formula)
+
+                left_child_conclusions.append(A)
+
+                for formula in delta:
+                    left_child_conclusions.append(formula)
+
+        elif len(left) == 3:
+
+            A = left[0]
+            B = left[2]
+            connective = left[1]
+
+            if connective == 'and':
+
+                for formula in gamma:
+                    left_child_premises.append(formula)
+
+                left_child_premises.append(A)
+                left_child_premises.append(B)
+
+                for formula in delta:
+                    left_child_conclusions.append(formula)
+
+            elif connective == 'or':
+
+                for formula in gamma:
+                    left_child_premises.append(formula)
+                    right_child_premises.append(formula)
+
+                left_child_premises.append(A)
+                right_child_premises.append(B)
+
+                for formula in delta:
+                    left_child_conclusions.append(formula)
+                    right_child_conclusions.append(formula)
+
+            elif connective == 'then':
+
+                for formula in gamma:
+                    left_child_premises.append(formula)
+                    right_child_premises.append(formula)
+
+                left_child_conclusions.append(A)
+                right_child_premises.append(B)
+
+                for formula in delta:
+                    left_child_conclusions.append(formula)
+                    right_child_conclusions.append(formula)
 
     if len(left_child_premises) > 0 or len(left_child_conclusions) > 0:
         node.left_child = Node(left_child_premises, left_child_conclusions)
